@@ -1,0 +1,521 @@
+\documentclass[12pt, a4paper]{report}
+\usepackage[utf8]{inputenc}
+\usepackage{geometry}
+\geometry{a4paper, top=1.2in, bottom=1.2in, left=1.2in, right=1.2in}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{hyperref}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{circuitikz} % Extremely useful for digital clock/7447/calculator diagrams
+
+% Clean and professional hyperlink setup (No flashy colors)
+\hypersetup{
+    colorlinks=true,
+    linkcolor=black,
+    filecolor=black,      
+    urlcolor=black,
+    citecolor=black
+}
+
+% Code snippet styling
+\lstset{
+    basicstyle=\ttfamily\footnotesize,
+    backgroundcolor=\color{black!5},
+    frame=single,
+    rulecolor=\color{black!20},
+    breaklines=true,
+    keywordstyle=\bfseries,
+}
+
+% Chapter formatting for a clean look
+\titleformat{\chapter}[display]
+  {\normalfont\huge\bfseries}{\chaptertitlename\ \thechapter}{20pt}{\Huge}
+\titlespacing*{\chapter}{0pt}{-20pt}{40pt}
+
+% Header and Footer styling
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small SRFP Internship Report}
+\fancyhead[R]{\small IIT Hyderabad}
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0pt}
+
+\begin{document}
+
+% --------------------------------------------------------
+% TITLE PAGE
+% --------------------------------------------------------
+\begin{titlepage}
+    \centering
+    \vspace*{2cm}
+    
+    {\Huge \bfseries Summer Research Fellowship Programme (SRFP)\par}
+    \vspace{1cm}
+    {\Large \bfseries 8-Week Internship Final Report\par}
+    
+    \vspace{2.5cm}
+    {\large \textit{A comprehensive report detailing work on:\\ Linux Environments, Digital Logic ICs (7447, 7474), Minor Projects (Digital Clock, Calculator), and FPGA Implementation}\par}
+    
+    \vspace{2.5cm}
+    {\Large \textbf{Prepared by:}\\ Mr. Devang Sachin Gupta\par}
+    
+    \vspace{1.5cm}
+    {\Large \textbf{Under the Supervision of:}\\ Dr. G.V.V. Sharma\par}
+    
+    \vspace{1.5cm}
+    {\Large \textbf{Indian Institute of Technology (IIT) Hyderabad}\\May 26, 2026 - July 20, 2026\par}
+    \vspace{0.5cm}
+    
+\end{titlepage}
+
+% --------------------------------------------------------
+% TABLE OF CONTENTS
+% --------------------------------------------------------
+\tableofcontents
+\newpage
+
+% --------------------------------------------------------
+% CHAPTER 1: WORKSPACE & ENVIRONMENT SETUP
+% --------------------------------------------------------
+% --------------------------------------------------------
+% CHAPTER 1: WORKSPACE & ENVIRONMENT SETUP
+% --------------------------------------------------------
+\chapter{Workspace \& Environment Setup}
+
+The initial phase of the internship required establishing a robust, efficient, and reproducible development environment. A Unix-based workflow was chosen to ensure compatibility with various hardware design tools, compilers, and typesetting engines required for the SRFP tasks.
+
+\section{Linux Dualboot Configuration}
+To leverage the full potential of open-source development tools, a Linux dual-boot environment (Ubuntu) was configured alongside the existing Windows operating system. This involved shrinking the Windows partition to allocate dedicated unallocated space, creating a bootable USB drive using tools like Rufus, and configuring the GRUB bootloader to seamlessly switch between the operating systems at startup.
+
+Partitioning and disk management were handled carefully to separate the root (\texttt{/}) directory, swap space, and home (\texttt{/home}) directory. Post-installation, the system drives and partitions were verified using standard Linux command-line utilities.
+
+\begin{lstlisting}[language=bash, caption=Useful Disk Management Commands]
+# Update the package index post-installation
+sudo apt update && sudo apt upgrade -y
+
+# List all block devices and their partitions
+lsblk
+
+# Check disk space usage on mounted filesystems
+df -h
+\end{lstlisting}
+
+\section{Command Line \& Terminal Tools}
+Mastering the command-line interface was a key objective to improve workflow speed and automate repetitive tasks.
+
+\subsection{Termux}
+For on-the-go accessibility and mobile environment testing, Termux was installed on an Android device. Termux acts as a powerful terminal emulator that provides a base Linux environment, allowing for remote SSH access to the main workspace and minor script testing when away from the workstation.
+
+\begin{lstlisting}[language=bash, caption=Termux Setup and SSH Configuration]
+# Update Termux packages
+pkg update && pkg upgrade
+
+# Install OpenSSH for remote server access
+pkg install openssh
+
+# Generate an SSH key pair
+ssh-keygen -t rsa -b 4096
+\end{lstlisting}
+
+\subsection{Ranger}
+To navigate complex directory structures efficiently without relying on a graphical user interface (GUI), \textbf{Ranger}, a console file manager with VI key bindings, was integrated into the workflow. Ranger allows for quick file previews, rapid directory traversal, and seamless execution of shell commands from within the file manager.
+
+\begin{lstlisting}[language=bash, caption=Installing and Launching Ranger]
+# Install Ranger via APT
+sudo apt install ranger
+
+# Launch Ranger in the terminal
+ranger
+\end{lstlisting}
+
+\section{Text Editors and Typesetting}
+Standardizing the code editing and document formatting processes was crucial for maintaining consistency across hardware description files and report drafts.
+
+\subsection{Neovim}
+Neovim was selected as the primary text editor due to its extensibility, low latency, and highly customizable nature. By configuring the \texttt{init.lua} file, essential plugins for syntax highlighting, auto-completion, and file exploration were added. Using VI/Vim keybindings significantly reduced the reliance on a mouse, thereby increasing coding efficiency for languages like C, Verilog, and Python.
+
+\begin{lstlisting}[language=bash, caption=Neovim Installation and Configuration Setup]
+# Install Neovim
+sudo apt install neovim
+
+# Create the configuration directory and file
+mkdir -p ~/.config/nvim
+touch ~/.config/nvim/init.lua
+
+# Open the configuration file in Neovim
+nvim ~/.config/nvim/init.lua
+\end{lstlisting}
+
+\subsection{LaTeX}
+For technical documentation and the creation of this final report, LaTeX was utilized. LaTeX provides unparalleled control over document structure, mathematical typesetting, and referencing. The \texttt{texlive-full} distribution was installed to ensure all necessary packages (such as \texttt{circuitikz} for digital logic diagrams and \texttt{amsmath} for equations) were locally available.
+
+\begin{lstlisting}[language=bash, caption=LaTeX Compilation Workflow]
+# Install the complete TeX Live distribution
+sudo apt install texlive-full
+
+# Compile a LaTeX document into a PDF
+pdflatex srfp_report.tex
+
+# Clean up auxiliary files generated during compilation
+rm *.aux *.log *.toc *.out
+\end{lstlisting}
+% --------------------------------------------------------
+% CHAPTER 2: DIGITAL LOGIC & HARDWARE COMPONENTS
+% --------------------------------------------------------
+\chapter{Digital Logic Design \& Components}
+
+\section{Loop Constructs in Hardware Description}
+In hardware design, loop constructs are essential for generating repetitive logic structures without manually instantiating each component. Using \texttt{for} loops or \texttt{generate} blocks allows designers to create scalable architectures, such as multi-bit adders or shift registers, leading to cleaner and more maintainable code.
+
+\section{7474 D-Type Flip-Flop}
+The 7474 IC is a high-speed Dual D-type positive-edge-triggered flip-flop, a fundamental building block in sequential digital logic. Unlike combinational logic (such as the 7447 decoder) where outputs depend solely on current inputs, the 7474 incorporates memory, allowing it to store state information between clock cycles.
+
+\subsection{Pin Configuration and Architecture}
+The IC contains two independent flip-flops (Flip-Flop 1 and Flip-Flop 2) packaged in a standard 14-pin DIP configuration. The IC is powered via VCC (Pin 14) and Ground (Pin 7). For a single flip-flop (e.g., Flip-Flop 1), the primary interface pins are defined as follows:
+\begin{itemize}
+    \item \textbf{Data Input (D - Pin 2):} The logical state (0 or 1) presented at this pin is transferred to the output during the clock transition.
+    \item \textbf{Clock (CLK - Pin 3):} A positive-going transition (LOW to HIGH edge) triggers the data transfer. The IC is strictly edge-triggered, meaning changes on the D pin while the clock is steady (HIGH or LOW) do not affect the output.
+    \item \textbf{Outputs (Q - Pin 5 and $\overline{Q}$ - Pin 6):} Q represents the current stored state, while $\overline{Q}$ provides the complementary (inverted) state.
+    \item \textbf{Asynchronous Inputs (PRESET - Pin 4 and CLEAR - Pin 1):} These active-low pins override both the clock and data inputs. Setting PRESET to LOW forces Q to HIGH, while setting CLEAR to LOW forces Q to LOW. For normal synchronous operation, both must be tied to HIGH (5V).
+\end{itemize}
+
+\subsection{Functional Operation and Applications}
+The defining characteristic of the 7474 is its precise timing requirement. Data must be stable at the D input for a specific setup time prior to the rising edge of the clock signal, and held for a brief hold time afterward to ensure reliable state capture.
+
+In the context of hardware design and the minor projects developed, the 7474 was instrumental in designing robust sequential circuits:
+\begin{itemize}
+    \item \textbf{Frequency Division (T-Flip Flop Configuration):} By hardwiring the inverted output ($\overline{Q}$) back into the Data (D) input, the flip-flop toggles its state on every rising clock edge. This effectively divides the input clock frequency by a factor of two. Cascading multiple such setups forms the basis of binary counters and precise timing circuits.
+    \item \textbf{Shift Registers and State Machines:} Cascading multiple 7474 flip-flops (connecting the Q output of one stage to the D input of the next) allows for the creation of shift registers. This is essential for serial-to-parallel data conversion and the implementation of finite state machines (FSM).
+    \item \textbf{Debouncing Switches:} Mechanical switches often produce multiple noisy pulses when pressed. Using the flip-flops as debounce latches ensures clean, single-pulse signals are sent to downstream logic gates, preventing erratic counting or false triggers.
+\end{itemize}
+
+\section{7447 BCD to 7-Segment Decoder and Workflow}
+For displaying numeric outputs, the 7447 BCD to 7-Segment Decoder was interfaced with a Common Anode 7-segment display. 
+
+\subsection{Hardware Implementation}
+The physical circuit was built on a breadboard and interfaced with an Arduino Uno. 
+
+\begin{figure}[h]
+    \centering
+    % Ensure your image is saved as 'breadboard_setup.jpg' in the same directory
+    \includegraphics[width=0.8\textwidth]{7447.png} 
+    \caption{Breadboard setup of the 7447 IC and 7-segment display connected to Arduino Uno}
+\end{figure}
+
+The pinout and wiring configuration are defined as follows:
+\begin{itemize}
+    \item Arduino D2 connects to 7447 Pin 7 (A)
+    \item Arduino D3 connects to 7447 Pin 1 (B)
+    \item Arduino D4 connects to 7447 Pin 2 (C)
+    \item Arduino D5 connects to 7447 Pin 6 (D)
+    \item Arduino 5V connects to 7447 Pin 16
+    \item Arduino GND connects to 7447 Pin 8
+    \item 7447 Pin 3 connects to +5V
+    \item 7447 Pin 4 connects to +5V
+    \item 7447 Pin 5 connects to +5V
+    \item 7447 Pin 13 connects to Segment a
+    \item 7447 Pin 12 connects to Segment b
+    \item 7447 Pin 11 connects to Segment c
+    \item 7447 Pin 10 connects to Segment d
+    \item 7447 Pin 9 connects to Segment e
+    \item 7447 Pin 15 connects to Segment f
+    \item 7447 Pin 14 connects to Segment g
+    \item Seven Segment Common Pins connect to +5V
+\end{itemize}
+
+\subsection{Android Development and Upload Workflow}
+A unique aspect of this implementation was executing the entire development, compilation, and upload process on an Android device. The primary tools for this workflow include Termux, Ubuntu (via proot-distro), Neovim (nvim), Arduino CLI, and Arduino Droid.
+
+\textbf{Setup and Configuration:}
+The initial environment requires installing packages like \texttt{proot-distro}, \texttt{git}, \texttt{curl}, \texttt{wget}, \texttt{neovim}, and \texttt{avra} within Termux. An Ubuntu container is then installed and accessed using \textbf{\texttt{proot-distro install ubuntu}} and \textbf{\texttt{proot-distro login ubuntu}}. Inside the Ubuntu container, Arduino CLI is downloaded, and the \texttt{arduino:avr} core is installed via \textbf{\texttt{arduino-cli core install arduino:avr}} to provide Arduino Uno support.
+
+\textbf{Development and Compilation:}
+Source code is managed by downloading sketches directly from the GitHub repository using \textbf{\texttt{curl -L <url> -o <filename>}} into specific project directories (e.g., \texttt{\textasciitilde/Arduino Projects/inc\_dec}). Editing is performed purely in the terminal using Neovim (\textbf{\texttt{nvim filename.ino}}). 
+Once edited, sketches are compiled via the terminal command: \textbf{\texttt{arduino-cli compile --fqbn arduino:avr:uno .}}. For AVR Assembly programs, the code is compiled using \textbf{\texttt{avra filename.asm}}, which generates the necessary HEX and OBJ files.
+
+\textbf{Hardware Upload:}
+To flash the compiled code, the generated HEX file must be copied from the hidden \texttt{.cache} directory to the device's internal storage, specifically into the ArduinoDroid export folder using \textbf{\texttt{cp *.hex /sdcard/ArduinoDroid/exp5/}}. The Arduino Uno is connected to the Android device via an OTG cable. Finally, ArduinoDroid is used to select the precompiled HEX file and upload it directly to the board.
+% --------------------------------------------------------
+% CHAPTER 3: PROBLEM SOLVING
+% --------------------------------------------------------
+\chapter{GATE Problem Analysis}
+
+\section{Problem Statement (GATE IN 2022)}
+The following problem was analyzed and simulated in hardware. The objective is to determine the Boolean expression for the output $F$ of the logic block shown in Figure 3.1.
+
+\begin{figure}[h]
+    \centering
+    % Ensure your image is saved as 'gate_diagram.jpg' in the same directory
+    \includegraphics[width=0.6\textwidth]{gate.png} 
+    \caption{Logic circuit for GATE IN 2022 problem}
+\end{figure}
+
+The given options are:\newline
+a) $A+B$ \newline
+b) $A\overline{B}$ \newline
+c) $A+\overline{B}$ \newline
+d) $\overline{B}$
+
+\section{Systematic Solution}
+\textbf{Step 1: Signal Identification on the Main Buses}
+The circuit generates inverted signals using the two NOT gates. Let's establish the signals on the four horizontal lines from top to bottom:
+\begin{itemize}
+    \item Line 1 (Top): Output of the top NOT gate $\Rightarrow \overline{B}$
+    \item Line 2: Direct input line for $B$
+    \item Line 3: Output of the bottom NOT gate $\Rightarrow \overline{A}$
+    \item Line 4 (Bottom): Direct input line for $A$
+\end{itemize}
+
+\textbf{Step 2: Analysis of the First-Stage NOR Gates}
+By tracing the vertical lines from the horizontal buses to the inputs of the two parallel NOR gates, we can derive their Boolean expressions:
+\begin{itemize}
+    \item \textbf{Left NOR Gate ($Y_1$):} The inputs are connected to Line 3 ($\overline{A}$) and Line 1 ($\overline{B}$). Applying the NOR operation and De Morgan's Law: 
+    \begin{equation}
+        Y_1 = \overline{\overline{A} + \overline{B}} = \overline{\overline{A}} \cdot \overline{\overline{B}} = A \cdot B
+    \end{equation}
+    \item \textbf{Right NOR Gate ($Y_2$):} The inputs are connected to Line 4 ($A$) and Line 1 ($\overline{B}$). Applying the NOR operation:
+    \begin{equation}
+        Y_2 = \overline{A + \overline{B}} = \overline{A} \cdot \overline{\overline{B}} = \overline{A} \cdot B
+    \end{equation}
+\end{itemize}
+
+\textbf{Step 3: Evaluating the Final Output ($F$)}
+The final NOR gate evaluates the outputs $Y_1$ and $Y_2$:
+\begin{equation}
+    F = \overline{Y_1 + Y_2} = \overline{(AB) + (\overline{A}B)}
+\end{equation}
+Factoring out the common term $B$:
+\begin{equation}
+    F = \overline{B(A + \overline{A})}
+\end{equation}
+According to Boolean algebra rules, the OR of a variable with its complement is always 1 ($A + \overline{A} = 1$):
+\begin{equation}
+    F = \overline{B \cdot 1} = \overline{B}
+\end{equation}
+Therefore, the correct option is \textbf{(d) $\overline{B}$}.
+
+\subsection{Truth Table}
+The theoretical findings are verified by the following truth table:
+\begin{table}[h]
+\centering
+\begin{tabular}{|c|c|c|c|c|}
+\hline
+\textbf{A} & \textbf{B} & \textbf{$Y_1 = AB$} & \textbf{$Y_2 = \overline{A}B$} & \textbf{$F = \overline{Y_1 + Y_2}$} \\ \hline
+0 & 0 & 0 & 0 & 1 \\ \hline
+0 & 1 & 0 & 1 & 0 \\ \hline
+1 & 0 & 0 & 0 & 1 \\ \hline
+1 & 1 & 0 & 1 & 0 \\ \hline
+\end{tabular}
+\caption{Truth Table verification for Output $F$}
+\end{table}
+
+\section{Hardware Implementation}
+\subsection{Components Required}
+\begin{itemize}
+    \item 1x Arduino (Uno/Nano)
+    \item 1x Breadboard
+    \item 1x 7447 Decoder (BCD to 7-Segment)
+    \item 1x Common Anode 7-Segment Display
+    \item 7x $220\Omega$ Resistors (Current limiting for the display segments)
+    \item Jumper Wires
+\end{itemize}
+
+\subsection{Circuit Connections}
+\textbf{A. Decoder (7447) to Arduino (Inputs):}
+Since the logic circuit's final output $F$ evaluates to only a single bit (0 or 1), we exclusively control Input A (the Least Significant Bit) of the 7447 decoder.
+\begin{itemize}
+    \item 7447 Input A (Pin 7): Connect to Arduino Pin 4 (This pin carries computed Output F).
+    \item 7447 Inputs B (Pin 1), C (Pin 2), D (Pin 6): Connect directly to GND.
+    \item 7447 LT / Pin 3 (Lamp Test): Connect to 5V.
+    \item 7447 BI/RBO / Pin 4 (Blanking): Connect to 5V.
+    \item 7447 RBI / Pin 5 (Ripple Blanking): Connect to 5V.
+    \item 7447 VCC (Pin 16) \& GND (Pin 8): Connect to 5V and GND respectively.
+\end{itemize}
+
+\textbf{B. Decoder to 7-Segment Display (Outputs):}
+Each output pin from the 7447 decoder connects to the corresponding segment of the display through a $220\Omega$ resistor. 
+The connections are: Pin 13 $\rightarrow$ Seg A, Pin 12 $\rightarrow$ Seg B, Pin 11 $\rightarrow$ Seg C, Pin 10 $\rightarrow$ Seg D, Pin 9 $\rightarrow$ Seg E, Pin 15 $\rightarrow$ Seg F, and Pin 14 $\rightarrow$ Seg G. The Display Common Pin connects directly to 5V.
+
+\textbf{Overview:} The Arduino Uno computes the Boolean logic and sends the resulting single-bit output (F) from Pin 4 to the 7447 decoder's Input A. The decoder translates this binary signal into a 7-segment format, driving the common-anode display via $220\Omega$ current-limiting resistors. The full automated Arduino C++ and Assembly code simulating this logic is available on the project's GitHub repository.
+% --------------------------------------------------------
+% CHAPTER 4: MINOR PROJECT - DIGITAL CLOCK
+% --------------------------------------------------------
+\chapter{Minor Project: Digital Clock}
+
+\section{Project Overview and Specifications}
+This project documents the comprehensive design, prototyping, permanent assembly, and firmware implementation of a standalone digital clock. The system is engineered around the following core specifications:
+\begin{itemize}
+    \item \textbf{Microcontroller:} ATmega328P-PU (Standalone bare chip)
+    \item \textbf{Clock Source:} 16 MHz Quartz Crystal Oscillator
+    \item \textbf{Display Type:} 4-Digit 7-Segment Display (Multiplexed)
+    \item \textbf{Power Supply:} 5V DC via Type-B USB module
+\end{itemize}
+
+\section{Theory of Operation}
+A digital clock functions as a highly precise counting machine. The architecture relies on several interconnected subsystems:
+\begin{itemize}
+    \item \textbf{The Brain \& Timing:} The ATmega328P utilizes a hardware timer to count the microscopic pulses from the 16 MHz crystal oscillator. Exactly 16,000,000 vibrations constitute one second. Two $22\text{ pF}$ capacitors are placed on pins 9 and 10 to Ground to act as shock absorbers, stabilizing the electrical resonance and preventing drift.
+    \item \textbf{Power \& Stability:} Two $100\text{ nF}$ ceramic bypass capacitors are placed directly across the power pins (7 \& 8, and 20 \& 22). These act as local energy reserves, filtering high-frequency noise and supplying instant current during rapid display multiplexing. 
+    \item \textbf{Logic Protection:} A $10\text{ k}\Omega$ pull-up resistor is tied from 5V to Pin 1 (RESET) to securely hold the pin in a HIGH state, preventing random electromagnetic noise from spontaneously resetting the clock to 12:00.
+    \item \textbf{Display Multiplexing:} To conserve GPIO pins, the 4-digit display rapidly cycles power to one digit at a time utilizing Persistence of Vision. Seven $330\Omega$ resistors strictly limit current to the segments (A-G), protecting both the microcontroller and the LEDs from thermal runaway.
+\end{itemize}
+
+\section{Phase 1: Breadboard Prototyping}
+Initial testing was conducted using an Arduino Uno as the primary controller before migrating to a standalone chip.
+\begin{itemize}
+    \item \textbf{Segment Wiring (The Shapes):} Arduino digital pins D2 through D8 were connected to display segments A through G, each with a $330\Omega$ inline resistor.
+    \item \textbf{Digit Selects (Multiplexing):} Arduino pins D9, D10, D11, and D12 were connected directly to the Digit 1 through Digit 4 common pins on the display.
+    \item \textbf{Colon \& Interface:} Two central red LEDs (colon) were driven by analog pin A3 with $330\Omega$ resistors to Ground. Three push buttons (Hour, Minute, Mode) were connected to pins A0, A1, and A2. By utilizing the software \texttt{INPUT\_PULLUP} function, the buttons only required a direct connection to Ground.
+\end{itemize}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.7\textwidth]{breadboard.png} 
+    \caption{Detailed Electronic Schematic for Prototype Testing}
+\end{figure}
+
+\section{Phase 2: In-System Programming (ISP)}
+To operate independently, the bare ATmega328P chip required a bootloader. The Arduino Uno was configured to act as a programmer.
+\begin{enumerate}
+    \item \textbf{Target Life Support:} The standalone chip was powered via the Uno (5V to pins 7/20, GND to pins 8/22). The 16 MHz crystal and $22\text{ pF}$ capacitors were wired to pins 9 and 10, alongside the $10\text{ k}\Omega$ reset pull-up resistor.
+    \item \textbf{SPI Data Lines:} The Uno's D10 was connected to the target's RESET (Pin 1). MOSI (D11) connected to target Pin 17, MISO (D12) to Pin 18, and SCK (D13) to Pin 19.
+    \item \textbf{Auto-Reset Prevention:} A $10\mu\text{F}$ capacitor was placed between the Uno's RESET and GND pins to prevent it from rebooting during the burn process. 
+\end{enumerate}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.8\textwidth]{isp.png} 
+    \caption{In-System Programming (ISP) Wiring Diagram}
+\end{figure}
+
+\section{Phase 3: Standalone Hardware Integration}
+Following the bootloader installation, the Uno was removed, and the ATmega328P was wired for independent execution. 
+\begin{itemize}
+    \item \textbf{Segments A-G:} IC Pins 4-6 and 11-14 (via $330\Omega$ resistors).
+    \item \textbf{Digit Selects:} IC Pins 15-18 connected directly to the display digit pins.
+    \item \textbf{Colon LEDs \& Buttons:} IC Pin 26 controlled the colon LEDs, while Pins 23, 24, and 25 monitored the Hour, Minute, and Mode buttons respectively.
+\end{itemize}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.9\textwidth]{standalone.png} 
+    \caption{System Block Wiring Diagram for the Standalone Circuit}
+\end{figure}
+
+\section{Phase 4: Permanent Assembly (Soldering)}
+The verified breadboard circuit was transferred to a perforated circuit board (perfboard).
+\begin{enumerate}
+    \item \textbf{Component Placement:} A 28-pin DIP socket was centered on the board. The 16 MHz crystal and its $22\text{ pF}$ capacitors were placed as tightly as possible to pins 9 and 10 to prevent signal degradation. Figure 4 illustrates the component layout from the top view.
+    \item \textbf{Soldering Technique:} Components were tacked down by soldering opposite corners first. The snipped-off legs from the resistors were repurposed as solid-core wire to manually route the traces on the underside of the board, as shown in Figure 5.
+\end{enumerate}
+
+\begin{figure}[h]
+    \centering
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{front.png}
+        \caption{Recommended component layout on the dotboard}
+    \end{minipage}\hfill
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{board_back.jpeg}
+        \caption{The fully soldered standalone clock back}
+    \end{minipage}
+\end{figure}
+
+\section{Phase 5: Custom 3D Printed Enclosure}
+To secure the electronics without relying on mechanical fasteners or adhesives, a custom CAD enclosure was designed utilizing a mechanical "snap-fit" mechanism.
+\begin{itemize}
+    \item \textbf{Design Mechanics:} The enclosure features a deep bottom tray and a top lid. Raised sections along the inner walls contain tiny horizontal lips. As the halves are pushed together, the thermoplastic flexes and snaps back, locking the case shut.
+    \item \textbf{Fabrication:} PLA or PETG filaments are recommended with a fine layer height (0.16 mm to 0.20 mm). Both shells were printed flat on their backs to ensure the interlocking tabs were built horizontally for maximum strength.
+\end{itemize}
+
+\begin{figure}[h]
+    \centering
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{bottom.png}
+        \caption{The deep bottom tray}
+    \end{minipage}\hfill
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{top.png}
+        \caption{The top lid}
+    \end{minipage}
+\end{figure}
+% --------------------------------------------------------
+% CHAPTER 5: CALCULATOR IMPLEMENTATION
+% --------------------------------------------------------
+\chapter{Calculator Design \& Implementation}
+
+\section{Project Overview}
+The objective of this project was to design a fully functional scientific calculator on an Arduino UNO (ATmega328P). A significant challenge was the absence of a hardware Floating Point Unit (FPU) on 8-bit AVR microcontrollers. To bypass standard, memory-heavy C math libraries, every mathematical function was implemented from first principles using numerical methods derived from Ordinary Differential Equation (ODE) models.
+
+\section{Hardware Design and Interfacing}
+The system hardware comprised the ATmega328P microcontroller running at 16 MHz, a $16\times2$ LCD (HD44780), and a custom $5\times5$ tactile push-button matrix.
+\begin{itemize}
+    \item \textbf{Keypad Matrix:} To minimize GPIO usage, the 25 buttons were wired into a 5-row by 5-column matrix, requiring only 10 pins (D8-D12 for rows, A0-A4 for columns). The microcontroller scans input by driving each row LOW in turn and reading the columns.
+    \item \textbf{LCD Output:} The display was connected in 4-bit mode to conserve pins, utilizing D4-D7 for the data bus, and D2 and D3 for Register Select and Enable respectively.
+\end{itemize}
+
+\section{Software Architecture and Parsing}
+The firmware was written in modular Embedded C (AVR-GCC). The end-to-end workflow handles user input, parses the mathematical expression, evaluates it, and outputs the result.
+\begin{itemize}
+    \item \textbf{Shunting Yard Algorithm:} User expressions (Infix notation) are parsed into Reverse Polish Notation (RPN) using the Shunting Yard algorithm, adhering to a strict operator precedence table. 
+    \item \textbf{Bug Resolution:} During development, a bug in the tokeniser (\texttt{pars.c}) was identified where multi-digit numbers (e.g., "18") were erroneously split into separate single-digit tokens ("1" and "8"). This was resolved by modifying the token-accumulation loop to correctly read consecutive digit characters before pushing the complete number to the RPN evaluator.
+\end{itemize}
+
+\section{RK4 Mathematical Engine}
+Instead of lookup tables, functions like $\sin(x)$, $\ln(x)$, and $e^x$ were reformulated as initial value ODE problems. 
+\begin{itemize}
+    \item \textbf{Implementation:} The ODEs were solved using the Runge-Kutta $4^{th}$ Order (RK4) method. For example, $e^x$ was modeled as $y' - y = 0$ with $y(0)=1$.
+    \item \textbf{Performance vs. Standard Methods:} Five numerical methods were evaluated. RK4 was selected because it achieved the lowest error (RMS $3.44 \times 10^{-7}$) at the 32-bit hardware precision floor, guaranteeing a predictable fixed execution time of $192.3\text{ \mu s}$ per function call.
+    \item \textbf{Resource Optimization:} The unified RK4-based framework proved highly efficient, consuming only 12.3 KB of Flash (38\%) and 350 bytes of SRAM (17%) on the ATmega328P.
+\end{itemize} design, ALU concepts, I/O handling
+
+% --------------------------------------------------------
+% CHAPTER 6: FPGA IMPLEMENTATION
+% --------------------------------------------------------
+\chapter{FPGA Integration and Hardware Exploration}
+
+\section{Overview of the Custom Architecture}
+The final phase of the SRFP internship explored high-speed parallel processing using a custom FPGA development board engineered at IIT Hyderabad. This heterogeneous board integrates a versatile FPGA fabric—dedicated to deterministic, high-speed parallel execution—with an embedded ESP32 microcontroller that serves as the master control unit, handling Wi-Fi/Bluetooth connectivity and high-level state machines.
+
+\section{Interfacing and Experimental Setups}
+To evaluate the board's capabilities and establish robust communication pipelines, practical integration tests were conducted using external development platforms:
+
+\begin{itemize}
+    \item \textbf{Arduino UNO Integration:} Initial testing utilized an Arduino to establish basic I2C and SPI buses. Bi-directional logic level shifters were required to bridge the Arduino's 5V logic with the FPGA's 3.3V I/O banks. While successful for basic logic verification, the Arduino's 16 MHz clock significantly bottlenecked the FPGA's true parallel processing potential.
+    
+    \item \textbf{Raspberry Pi 3 Integration:} To achieve high-bandwidth data transfers, the setup was upgraded to a Raspberry Pi 3. Hardware SPI pins were connected directly to the FPGA (both operating safely at 3.3V) for megahertz-speed data pushing. In a parallel experiment, the on-board ESP32 was programmed to wirelessly publish processed data to a local Mosquitto MQTT broker hosted on the Pi, demonstrating a highly efficient edge-computing workflow.
+\end{itemize}
+
+\section{Deployment \& Testing Workflow}
+Working with this custom architecture required a standardized RTL design and deployment pipeline. Hardware architectures were drafted in Verilog, with pin constraints carefully synthesized to match the physical traces of the development board. 
+
+Once compiled, the bitstreams were successfully deployed using two methods: directly loading into the FPGA fabric via a dedicated JTAG programmer, or passing the bitstream through the ESP32, which successfully demonstrated the board's capability for remote Over-The-Air (OTA) hardware updates.
+
+% --------------------------------------------------------
+% CHAPTER 7: CONCLUSION
+% --------------------------------------------------------
+\chapter{Conclusion}
+
+The 8-week Summer Research Fellowship Programme (SRFP) at IIT Hyderabad, under the supervision of Dr. G.V.V. Sharma, has been a profoundly enriching experience that bridged the gap between theoretical computer science and practical hardware engineering. 
+
+The journey began with establishing a robust command-line development environment. Mastering Linux workflows, Termux, Neovim, and LaTeX laid a strong foundation for efficient coding and technical documentation. Progressing into digital logic, the hands-on implementation of the 7447 and 7474 ICs, along with the hardware realization of a GATE 2022 logic problem, solidified my understanding of Boolean algebra, combinational circuits, and sequential logic prototyping.
+
+The internship culminated in the development of robust, standalone embedded systems. The Digital Clock project provided an end-to-end experience in microcontroller architecture—from burning bootloaders on bare ATmega328P chips (ISP) and permanent perfboard soldering, to designing and 3D printing custom mechanical snap-fit enclosures. 
+
+Similarly, the Scientific Calculator project pushed the architectural limits of 8-bit AVR microcontrollers. By implementing the Runge-Kutta 4th Order (RK4) numerical method from scratch, the project successfully bypassed the absence of a hardware Floating Point Unit (FPU). This demonstrated how efficient algorithmic design in Embedded C can overcome strict hardware constraints while maintaining high precision.
+
+Finally, the exploration of the custom FPGA development board equipped with an embedded ESP32 SoC provided invaluable exposure to heterogeneous computing. Interfacing this board with platforms like the Arduino UNO and Raspberry Pi 3 highlighted the power of hardware-software co-design, high-speed SPI communication, and edge-computing IoT architectures.
+
+In conclusion, this fellowship has immensely broadened my technical skillset, transforming fundamental theoretical concepts into tangible, optimized, and standalone hardware solutions. The rigorous debugging, system integration, and exposure to advanced research methodologies have thoroughly prepared me for future technical challenges in the domains of embedded systems and digital logic design.
+
+\end{document}
+\end{document}
